@@ -1,3 +1,5 @@
+using Redis_Example.Middleware;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -36,6 +38,11 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+// 1 Way : Whenever Don't Use Extension Method for RequestLoggingMiddleware
+//app.UseMiddleware<RequestLoggingMiddleware>();
+// 2 Way : Use Extension Method for RequestLoggingMiddleware
+app.UseRequestLogging();
 
 app.MapControllers();
 
