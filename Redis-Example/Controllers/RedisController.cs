@@ -1,6 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using ServiceStack;
 using ServiceStack.Redis;
+using ServiceStack.Script;
 using System.Text;
+using RouteAttribute = ServiceStack.RouteAttribute;
 
 namespace Redis_Example.Controllers
 {
@@ -8,12 +12,25 @@ namespace Redis_Example.Controllers
     [ApiController]
     public class RedisController : ControllerBase
     {
+        private readonly IDistributedCache _cache;
+        public RedisController(IDistributedCache cache)
+        {
+            _cache = cache;
+        }
+
         [HttpPost("{Key},{Value}")]
         public ActionResult PostRedis(string Key, string Value)
         {
             using (var connection = new RedisClient())
             {
-                connection.Set(Key, Value);
+                 _cache.SetString(Key,Value,
+                 new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow =
+                         TimeSpan.FromMinutes(3)
+                 });
+                //connection.Set(Key, Value);
+                 //_cache.SetStringAsync(Key, Value);
             }
             return Ok();
         }
@@ -21,11 +38,26 @@ namespace Redis_Example.Controllers
         [HttpGet("{Key}")]
         public ActionResult GetRedis(string Key)
         {
-            using (var connection = new RedisClient())
+            var result = _cache.GetString(Key);
+            return Ok(result);
+            //using (var connection = new RedisClient())
+            //{
+            //    var result = ASCIIEncoding.ASCII.GetString(connection.Get(Key));
+            //    return Ok(result);
+            //}
+        }
+
+        [HttpGet("GetRedisAsync")]
+        public async Task<IActionResult> GetRedisAsync(string Key)
+        {
+            var result =  await _cache.GetStringAsync(Key);
+            if (string.IsNullOrEmpty(result))
             {
-                var result = ASCIIEncoding.ASCII.GetString(connection.Get(Key));
-                return Ok(result);
+            await Task.Delay(5000);
+            return Ok(result);
             }
+            return Ok(result);
+
         }
 
         //[HttpPut("{id}")]
