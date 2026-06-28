@@ -1,6 +1,7 @@
 using Microsoft.OpenApi;
 using Redis_Example.Middleware;
 using Serilog;
+using Shop.Infrastructure.Context;
 using Shop.Persistence.Context;
 
 //1. Add Serilog 
@@ -45,8 +46,7 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddPersistence(builder.Configuration);
 
-//builder.Services
-//.AddInfrastructure();
+builder.Services.AddInfrastructure();
 
 //builder.Services
 //.AddApplication();
