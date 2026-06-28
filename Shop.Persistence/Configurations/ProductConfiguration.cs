@@ -24,6 +24,8 @@ namespace Shop.Persistence.Configurations
                 .HasDefaultValue(0);
             builder.Property(x => x.IsDeleted)
                  .HasDefaultValue(false);
+            builder.Property(x => x.RowVersion)
+                 .IsRowVersion();
             builder.HasIndex(x => x.Name)
                 .IsUnique();
         }
