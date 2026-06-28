@@ -1,5 +1,7 @@
+using Microsoft.OpenApi;
 using Redis_Example.Middleware;
 using Serilog;
+using Shop.Persistence.Context;
 
 //1. Add Serilog 
 Log.Logger = new LoggerConfiguration().CreateBootstrapLogger();
@@ -33,16 +35,33 @@ builder.Services
 //        "localhost:6379";
 //});
 
+// 1. Add Swagger 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    // The UI title/version label; not the OpenAPI version
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+});
+
+builder.Services.AddPersistence(builder.Configuration);
+
+//builder.Services
+//.AddInfrastructure();
+
+//builder.Services
+//.AddApplication();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+// 2. Add Swagger 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+     {
+         c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+     });
 }
 
 app.UseHttpsRedirection();
