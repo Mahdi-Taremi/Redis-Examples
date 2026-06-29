@@ -77,14 +77,16 @@ app.UseRequestLogging();
 app.MapControllers();
 
 // Initialization 
-using var scope = app.Services.CreateScope();
-var initializer =
-    scope.ServiceProvider
-         .GetRequiredService<IDatabaseInitializer>();
-await initializer.MigrateAsync();
-if (app.Environment.IsDevelopment())
+using (var scope = app.Services.CreateScope())
 {
-    await initializer.SeedAsync();
+    var initializer =
+        scope.ServiceProvider
+             .GetRequiredService<IDatabaseInitializer>();
+    await initializer.MigrateAsync();
+    if (app.Environment.IsDevelopment())
+    {
+        await initializer.SeedAsync();
+    }
 }
 
 app.Run();

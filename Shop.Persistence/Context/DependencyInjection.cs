@@ -18,17 +18,16 @@ namespace Shop.Persistence.Context
         this IServiceCollection services,
          IConfiguration configuration)
         {
-            //services.AddDbContext<ShopDbContext>(options =>
-            //{
-            //    options.UseSqlServer(
-            //        configuration.GetConnectionString("Local"));
-            //});
-            services.AddScoped<IApplicationDbContext>(
-            provider =>
+            services.AddDbContext<ShopDbContext>(options =>
+            {
+                options.UseSqlServer(
+                    configuration.GetConnectionString("Local"));
+            });
+            services.AddScoped<IApplicationDbContext>(provider =>
             provider.GetRequiredService<ShopDbContext>());
 
-            services.AddScoped<IDatabaseInitializer, DatabaseInitializer>();
             services.AddScoped<ProductSeeder>();
+            services.AddScoped<IDatabaseInitializer, DatabaseInitializer>();
             return services;
         }
     }

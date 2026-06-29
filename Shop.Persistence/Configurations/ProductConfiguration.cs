@@ -29,14 +29,13 @@ namespace Shop.Persistence.Configurations
             builder.HasIndex(x => x.Name)
                 .IsUnique();
 
-            builder.HasData(
-
-            new Product
-            {
-                 Name = "Keyboard",
-                 Price = 150,
-                 Stock = 5
-            });
+            //builder.HasData(
+            //new Product
+            //{
+            //     Name = "Keyboard",
+            //     Price = 150,
+            //     Stock = 5
+            //});
         }
     }
 }

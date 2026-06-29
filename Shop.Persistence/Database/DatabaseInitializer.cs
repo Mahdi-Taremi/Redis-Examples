@@ -36,6 +36,7 @@ namespace Shop.Persistence.Database
 
         public async Task SeedAsync()
         {
+            Console.WriteLine("Seeder Started");
             await _productSeeder.SeedAsync();
         }
     }
