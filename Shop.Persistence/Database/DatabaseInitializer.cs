@@ -29,5 +29,14 @@ namespace Shop.Persistence.Database
 
             await _productSeeder.SeedAsync(cancellationToken);
         }
+        public async Task MigrateAsync()
+        {
+            await _context.Database.MigrateAsync();
+        }
+
+        public async Task SeedAsync()
+        {
+            await _productSeeder.SeedAsync();
+        }
     }
 }

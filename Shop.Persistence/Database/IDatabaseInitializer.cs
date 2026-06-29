@@ -9,5 +9,7 @@ namespace Shop.Persistence.Database
     public interface IDatabaseInitializer
     {
         Task InitializeAsync(CancellationToken cancellationToken = default);
+        Task MigrateAsync();
+        Task SeedAsync();
     }
 }
