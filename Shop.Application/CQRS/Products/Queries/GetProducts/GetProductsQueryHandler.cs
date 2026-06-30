@@ -1,7 +1,7 @@
 ﻿using MediatR;
-using static System.Net.Mime.MediaTypeNames;
 //using Shop.Application.Common.Interfaces;
 using Shop.Application.Common.Interfaces.Repositories;
+using Shop.Application.Common.Models.Pagination;
 using Shop.Application.Common.Models.Products;
 using Shop.Application.Common.Specifications;
 using Shop.Application.CQRS.Products.DTOs;
@@ -10,10 +10,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Shop.Application.CQRS.Products.Queries.GetProducts
 {
-    public sealed class GetProductsQueryHandler: IRequestHandler< GetProductsQuery,IReadOnlyList<ProductDto>>
+    public sealed class GetProductsQueryHandler
+      : IRequestHandler<
+          GetProductsQuery,
+          PagedResponse<ProductDto>>
     {
         private readonly IProductRepository _repository;
 
@@ -23,7 +27,7 @@ namespace Shop.Application.CQRS.Products.Queries.GetProducts
             _repository = repository;
         }
 
-        public async Task<IReadOnlyList<ProductDto>>
+        public async Task<PagedResponse<ProductDto>>
             Handle(
                 GetProductsQuery request,
                 CancellationToken cancellationToken)
@@ -37,18 +41,26 @@ namespace Shop.Application.CQRS.Products.Queries.GetProducts
                     specification,
                     cancellationToken);
 
-            return products
+            var items =
+                products
+                .Skip((request.PageNumber - 1) * request.PageSize)
+                .Take(request.PageSize)
                 .Select(x => new ProductDto
                 {
                     Id = x.Id,
-
                     Name = x.Name,
-
                     Price = x.Price,
-
                     Stock = x.Stock
                 })
                 .ToList();
+
+            return new PagedResponse<ProductDto>
+            {
+                Items = items,
+                PageNumber = request.PageNumber,
+                PageSize = request.PageSize,
+                TotalCount = products.Count
+            };
         }
     }
 }

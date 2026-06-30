@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Shop.Application.CQRS.Products.Commands.CreateProduct;
+using Shop.Application.CQRS.Products.Queries;
 
 namespace Redis_Example.Controllers
 {
@@ -30,6 +31,22 @@ namespace Redis_Example.Controllers
                 return BadRequest(result.Error);
 
             return Ok(result.Value);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll(
+             int pageNumber = 1,
+             int pageSize = 10,
+             CancellationToken cancellationToken = default)
+        {
+            var result =
+                await _mediator.Send(
+                    new GetProductsQuery(
+                        pageNumber,
+                        pageSize),
+                    cancellationToken);
+
+            return Ok(result);
         }
     }
 }
