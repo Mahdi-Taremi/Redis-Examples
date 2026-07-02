@@ -1,7 +1,9 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Shop.Application.CQRS.Products.Commands.CreateProduct;
+using Shop.Application.CQRS.Products.Commands.UpdateProduct;
 using Shop.Application.CQRS.Products.Queries;
+using Shop.Application.CQRS.Products.Queries.GetProductById;
 
 namespace Redis_Example.Controllers
 {
@@ -47,6 +49,38 @@ namespace Redis_Example.Controllers
                     cancellationToken);
 
             return Ok(result);
+        }
+
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetById(
+            Guid id,
+            CancellationToken cancellationToken)
+        {
+            var result =
+                await _mediator.Send(
+                    new GetProductByIdQuery(id),
+                    cancellationToken);
+
+            return Ok(result);
+        }
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> Update(
+            Guid id,
+            UpdateProductCommand command,
+            CancellationToken cancellationToken)
+        {
+            if (id != command.Id)
+                return BadRequest();
+
+            var result =
+                await _mediator.Send(
+                    command,
+                    cancellationToken);
+
+            if (result.IsFailure)
+                return BadRequest(result.Error);
+
+            return NoContent();
         }
     }
 }

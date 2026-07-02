@@ -8,23 +8,33 @@ namespace Shop.Application.Common.Results
 {
     public class Result
     {
-        public bool IsSuccess { get; }
-        public bool IsFailure => !IsSuccess;
-        public string? Error { get; }
-
         protected Result(
             bool isSuccess,
-            string? error)
+            Error error)
         {
             IsSuccess = isSuccess;
             Error = error;
         }
 
+        public bool IsSuccess { get; }
+
+        public bool IsFailure => !IsSuccess;
+
+        public Error Error { get; }
+
         public static Result Success()
-            => new(true, null);
+            => new(true, Error.None);
 
         public static Result Failure(
-            string error)
+            Error error)
             => new(false, error);
+
+        public static Result<T> Success<T>(
+            T value)
+            => new(value, true, Error.None);
+
+        public static Result<T> Failure<T>(
+            Error error)
+            => new(default, false, error);
     }
 }

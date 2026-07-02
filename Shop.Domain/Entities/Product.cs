@@ -24,6 +24,14 @@ namespace Shop.Domain.Entities
             Price = price;
             Stock = stock;
         }
+        public void Update(string name,decimal price,int stock)
+        {
+            Name = name;
+
+            Price = price;
+
+            Stock = stock;
+        }
     }
-    
+
 }
